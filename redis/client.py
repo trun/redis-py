@@ -784,27 +784,11 @@ class Redis(object):
 
 
     #### SORTED SET COMMANDS ####
-    def zadd(self, name, value=None, score=None, **pairs):
+    def zadd(self, name, score=None, value=None, *args):
         """
-        For each kwarg in ``pairs``, add that item and it's score to the
-        sorted set ``name``.
-
-        The ``value`` and ``score`` arguments are deprecated.
+        Adds a member at the specified key with the ``value`` and ``score``.
         """
-        all_pairs = []
-        if value is not None or score is not None:
-            if value is None or score is None:
-                raise RedisError("Both 'value' and 'score' must be specified " \
-                                 "to ZADD")
-            warnings.warn(DeprecationWarning(
-                "Passing 'value' and 'score' has been deprecated. " \
-                "Please pass via kwargs instead."))
-            all_pairs.append(score)
-            all_pairs.append(value)
-        for pair in pairs.iteritems():
-            all_pairs.append(pair[1])
-            all_pairs.append(pair[0])
-        return self.execute_command('ZADD', name, *all_pairs)
+        return self.execute_command('ZADD', name, score, value, *args)
 
     def zcard(self, name):
         "Return the number of elements in the sorted set ``name``"
